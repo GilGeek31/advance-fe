@@ -3,10 +3,7 @@ import { Plus } from "lucide-react";
 import CategoryTabs from "../section/CategoryTabs";
 import CourseCard from "../section/CourseCard";
 import CourseFormModal from "../ui/CourseFormModal";
-import Imgthumbnail from "../../assets/card-image/Big 4 Auditor Financial Analyst_1.jpg";
-import ImgAvatar from "../../assets/card-avatar/avatar-01.png";
-import initialCourses from "../../data/course.json";
-import { set } from "zod";
+import { useCourses } from "../../hooks/useCourses";
 
 const categories = [
   "Semua Kelas",
@@ -17,7 +14,8 @@ const categories = [
 ];
 
 export default function CourseSection({ sectionRef }) {
-  const [courses, setCourses] = useState(initialCourses);
+  const { courses, isLoading, error, createCourse, editCourse, removeCourse } =
+    useCourses();
   const [isModalOpen, setisModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [activeCategory, setActiveCategory] = useState(categories[0]);
@@ -36,26 +34,29 @@ export default function CourseSection({ sectionRef }) {
   };
 
   //delete
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = async (id) => {
     if (confirm("yakin mau hapus course ini?")) {
-      setCourses((prev) => prev.filter((c) => c.id !== id));
+      await removeCourse(id);
     }
   };
 
   //submit
-  const handleFormSubmit = (formdata) => {
+  const handleFormSubmit = async (formdata) => {
     if (editingCourse) {
-      setCourses((prev) =>
-        prev.map((c) =>
-          c.id === editingCourse.id ? { ...c, ...formdata } : c,
-        ),
-      );
+      await editCourse(editingCourse.id, formdata);
     } else {
-      //create
-      const newCourse = { id: Date.now(), ...formdata };
-      setCourses((prev) => [newCourse, ...prev]);
+      await createCourse(formdata);
     }
   };
+
+  if (isLoading)
+    return <p className="text-center py-10">Memuat data course...</p>;
+  if (error)
+    return (
+      <p className="text-center py-10 text-error-default">
+        Gagal memuat data course.
+      </p>
+    );
 
   return (
     <>
