@@ -95,7 +95,7 @@ export default function CourseCard({
           {title}
         </h3>
 
-        <p className="text-body-sm text-text-dark-secondary mb-3">
+        <p className="hidden description-clamp text-body-sm text-text-dark-secondary mb-3">
           {description}
         </p>
 
