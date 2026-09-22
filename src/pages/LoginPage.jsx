@@ -36,6 +36,8 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     console.log("Login data:", data);
+
+    navigate("/");
   };
 
   return (

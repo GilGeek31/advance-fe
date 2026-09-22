@@ -49,7 +49,7 @@ export default function CourseSection({ sectionRef }) {
     }
   };
 
-  if (isLoading)
+  if (isLoading && courses.length === 0)
     return <p className="text-center py-10">Memuat data course...</p>;
   if (error)
     return (

@@ -6,3 +6,12 @@ export const store = configureStore({
     courses: courseReducer,
   },
 });
+
+// Setiap kali state berubah (create/edit/delete/get), otomatis simpan ke localStorage
+store.subscribe(() => {
+  try {
+    localStorage.setItem("courses", JSON.stringify(store.getState().courses));
+  } catch (err) {
+    console.error("Gagal simpan ke localStorage:", err);
+  }
+});

@@ -13,6 +13,7 @@ import AuthHeader from "../components/auth/AuthHeader";
 import Divider from "../components/ui/Divider";
 import GoogleButton from "../components/auth/GoogleButton";
 import Navbar from "../components/layout/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const registerSchema = z
   .object({
@@ -35,6 +36,7 @@ const registerSchema = z
   });
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -139,7 +141,7 @@ export default function RegisterPage() {
                 type="button"
                 color="primary"
                 variant="soft"
-                onClick={() => console.log("ke halaman daftar")}
+                onClick={() => navigate("/login")}
               >
                 Login
               </Button>
