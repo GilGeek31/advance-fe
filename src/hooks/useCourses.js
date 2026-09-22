@@ -1,13 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getCourses,
   addCourse,
   updateCourse,
   deleteCourse,
 } from "../services/api/courseApi";
+import { setCourses } from "../store/redux/courseReducer";
 
 export function useCourses() {
-  const [courses, setCourses] = useState([]);
+  const dispatch = useDispatch();
+  const courses = useSelector((state) => state.courses); // ← baca dari Redux store
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,13 +19,13 @@ export function useCourses() {
     setError(null);
     try {
       const data = await getCourses();
-      setCourses(data);
+      dispatch(setCourses(data)); // ← simpan hasil API ke Redux store
     } catch (err) {
       setError(err);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchCourses();
@@ -30,19 +33,20 @@ export function useCourses() {
 
   const createCourse = async (courseData) => {
     const newCourse = await addCourse(courseData);
-    setCourses((prev) => [newCourse, ...prev]);
+    dispatch(setCourses([newCourse, ...courses]));
   };
 
   const editCourse = async (id, courseData) => {
     await updateCourse(id, courseData);
-    setCourses((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...courseData } : c)),
+    const updated = courses.map((c) =>
+      c.id === id ? { ...c, ...courseData } : c,
     );
+    dispatch(setCourses(updated));
   };
 
   const removeCourse = async (id) => {
     await deleteCourse(id);
-    setCourses((prev) => prev.filter((c) => c.id !== id));
+    dispatch(setCourses(courses.filter((c) => c.id !== id)));
   };
 
   return {

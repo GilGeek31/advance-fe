@@ -1,3 +1,4 @@
+ini fe 2
 INSTALASI :
 
 1. git clone https://github.com/GilGeek31/advance-fe.git
