@@ -1,18 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Initial State — array kosong, nanti diisi data dari API
 const initialState = [];
 
 const courseSlice = createSlice({
   name: "courses",
   initialState,
   reducers: {
-    // Reducer untuk menangani data hasil API, disimpan ke state global
+    // GET — simpan seluruh data hasil API
     setCourses: (state, action) => {
       return action.payload;
+    },
+    // ADD — tambah 1 course baru ke state
+    addCourseToState: (state, action) => {
+      state.unshift(action.payload);
+    },
+    // EDIT — update 1 course yang cocok id-nya
+    updateCourseInState: (state, action) => {
+      const { id, data } = action.payload;
+      const index = state.findIndex((c) => c.id === id);
+      if (index !== -1) {
+        state[index] = { ...state[index], ...data };
+      }
+    },
+    // DELETE — hapus 1 course yang cocok id-nya
+    removeCourseFromState: (state, action) => {
+      return state.filter((c) => c.id !== action.payload);
     },
   },
 });
 
-export const { setCourses } = courseSlice.actions;
+export const {
+  setCourses,
+  addCourseToState,
+  updateCourseInState,
+  removeCourseFromState,
+} = courseSlice.actions;
+
 export default courseSlice.reducer;

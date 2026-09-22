@@ -6,11 +6,16 @@ import {
   updateCourse,
   deleteCourse,
 } from "../services/api/courseApi";
-import { setCourses } from "../store/redux/courseReducer";
+import {
+  setCourses,
+  addCourseToState,
+  updateCourseInState,
+  removeCourseFromState,
+} from "../store/redux/courseReducer";
 
 export function useCourses() {
   const dispatch = useDispatch();
-  const courses = useSelector((state) => state.courses); // ← baca dari Redux store
+  const courses = useSelector((state) => state.courses);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,7 +24,7 @@ export function useCourses() {
     setError(null);
     try {
       const data = await getCourses();
-      dispatch(setCourses(data)); // ← simpan hasil API ke Redux store
+      dispatch(setCourses(data));
     } catch (err) {
       setError(err);
     } finally {
@@ -31,22 +36,22 @@ export function useCourses() {
     fetchCourses();
   }, [fetchCourses]);
 
+  // ADD — panggil fungsi Add API dari services/api
   const createCourse = async (courseData) => {
     const newCourse = await addCourse(courseData);
-    dispatch(setCourses([newCourse, ...courses]));
+    dispatch(addCourseToState(newCourse));
   };
 
+  // EDIT — panggil fungsi Edit API dari services/api
   const editCourse = async (id, courseData) => {
     await updateCourse(id, courseData);
-    const updated = courses.map((c) =>
-      c.id === id ? { ...c, ...courseData } : c,
-    );
-    dispatch(setCourses(updated));
+    dispatch(updateCourseInState({ id, data: courseData }));
   };
 
+  // DELETE — panggil fungsi Delete API dari services/api
   const removeCourse = async (id) => {
     await deleteCourse(id);
-    dispatch(setCourses(courses.filter((c) => c.id !== id)));
+    dispatch(removeCourseFromState(id));
   };
 
   return {
